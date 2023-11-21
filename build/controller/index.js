@@ -5,3 +5,5 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./CrowllerController"));
 __export(require("./LoginController"));
+__export(require("./PeopleController"));
+__export(require("./ArticleController"));

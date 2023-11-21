@@ -1,13 +1,7 @@
-import fs from 'fs';
-import path from 'path';
 import superagent from 'superagent';
 import cheerio from 'cheerio';
-import { json } from 'body-parser';
-
-let oldWrite: string = '';
-export interface Analyzer {
-  analyze: (html: string, filePath: string) => string;
-}
+const schedule = require('node-schedule');
+const connection = require('../mysql/db')
 
 interface data {
   title: string;
@@ -17,50 +11,25 @@ interface data {
   message: string;
   people: Array<string>;
   isReaded: boolean;
+  articleUrl: string;
 }
 
 class Crowller {
-
-  private filePath = path.resolve(__dirname, '../../data/data.json');
   private rawHtml = '';
-  private the_people: Array<string> = ["陈宁",
-    "裴仰军",
-    "周伟",
-    "陈国荣",
-    "利节",
-    "陈刘奎",
-    "都进学",
-    "冯骊骁",
-    "祝华正",
-    "张倩",
-    "彭军",
-    "翟渊",
-    "于安宁",
-    "姚瑶",
-    "金尚柱",
-    "屈治华",
-    "胡燕",
-    "张咪",
-    "周召敏",
-    "周述敏",
-    "杨怡康",
-    "晏丹",]
-  private arr: Array<data> = [];
-  private oldWrite: Array<string> = [];
-  private cnt = 178;
+  public arr: Array<data> = [];
+  public isfinished = false;
+  public cnt = 180;
+  private point = 'xxyw.htm'
   private getLiArray(html: string) {
     const $ = cheerio.load(html);
     let LiArrays: Array<Cheerio> = [];
-
     LiArrays.push($('.ny_list').children('ul').children('li'));
     LiArrays.forEach((item, index) => {
       item.map((index, element) => {
         const title: string | undefined = $(element).find('a').attr('href');
         const aaa: Array<string> | undefined = title?.split('/');
-
         const flag = $(element).find('span').text();
         if (flag.includes('智能技术与工程学院')) {
-          let ResultArr: Array<data> | undefined;
           if (aaa && aaa[0] === '..') {
             const bbb: Array<string> | undefined = title?.split('/');
             let articleUrl = '';
@@ -73,12 +42,13 @@ class Crowller {
               try {
                 superagent.get(articleUrl).then((res) => {
                   const $ = cheerio.load(res.text);
-                  const temp: data = { content: '', title: '', imgSrc: '', academy: '', message: '', people: [], isReaded: false };
+                  const temp: data = { content: '', title: '', imgSrc: '', academy: '', message: '', people: [], isReaded: false, articleUrl: '' };
                   temp.title = $('.news_ny_left h2').text();
                   temp.message = $('.news_ny_left .message').text();
-                  temp.content = $('.news_ny_left .main').text();
+                  temp.content = $('.news_ny_left .main').text() || '';
                   temp.imgSrc = `https://www.cqust.edu.cn/${$('.news_ny_left .main img').attr('src')}`;
                   temp.isReaded = false;
+                  temp.articleUrl = articleUrl;
                   if (temp.content.includes('智能技术与工程学院')
                     || temp.title.includes('智能技术与工程学院')) {
                     temp.academy = '智能技术与工程学院';
@@ -88,14 +58,16 @@ class Crowller {
                       || temp.title.includes(item))) {
                       temp.people.push(item);
                       if (temp.isReaded === false) {
-                        this.writeFile(temp);
+                        this.arr.push(temp);
                         temp.isReaded = true;
                       }
                     }
                   });
 
+                }).catch((e) => {
+                  throw (e)
                 })
-              } catch (e) { }
+              } catch (e) { throw (e) }
             }
 
           }
@@ -103,46 +75,74 @@ class Crowller {
 
       });
     })
-
-
-
-
+    return this.arr;
   }
 
   private async getRawHtml() {
-    while (this.cnt >= 0) {
-      let url;
-      url = `https://www.cqust.edu.cn/index/xww/xxyw/${this.cnt}.htm`;
-      if (this.cnt === 178) {
-        url = `https://www.cqust.edu.cn/index/xww/xxyw.htm`;
-      }
+    const result = await superagent.get(`https://www.cqust.edu.cn/index/xww/xxyw.htm`);
+    this.rawHtml = result.text;
+    const $ = cheerio.load(this.rawHtml);
+    this.getLiArray(this.rawHtml);
+    const point = $('.ny_list').children('div').children('span').find('.p_next').find('a').attr('href')
+    this.cnt = parseInt(point.split('/')[1].split('.')[0]);
 
-      try {
-        const result = await superagent.get(url);
-        this.rawHtml = result.text;
-        this.getLiArray(this.rawHtml);
-        this.cnt = this.cnt - 1;
-      } catch (e) {
-      }
-    }
+    let rule = new schedule.RecurrenceRule();
+    rule.second = [0, 10, 20, 30, 40, 50];
+    console.log('开始爬取');
+    return new Promise(() => {
+      let job = schedule.scheduleJob(rule, async () => {
+        while (this.cnt >= 1) {
+          let url = `https://www.cqust.edu.cn/index/xww/xxyw/${this.cnt}.htm`;
+          const result = await superagent.get(url);
+          this.rawHtml = result.text;
+          this.getLiArray(this.rawHtml);
+          console.log(this.cnt)
+          this.cnt = this.cnt - 1;
+        }
+        if (this.cnt < 0) {
+          console.log('爬取成功');
+          this.writeFile()
+          job.cancel();
+        }
 
+      })
+    })
   }
 
-  private writeFile(content: data) {
-    this.arr.push(content);
+  public writeFile() {
     Array.from(new Set(this.arr));
-    fs.writeFileSync(this.filePath, JSON.stringify(this.arr));
+    connection.query(`TRUNCATE TABLE Aschema `);
+    this.arr.forEach((item: any) => {
+      connection.query(`insert into Aschema(id, content, title, imgSrc, academy, message, people, articleUrl) values(0,?,?,?,?,?,?,?);`,
+        [item.content, item.title, item.imgSrc, item.academy, item.message, JSON.stringify(item.people), item.articleUrl], function (err: any, result: any) {
+          if (err) {
+            throw err;
+          }
+        });
+      connection.query(`select count(people) as num  from aschema WHERE people like '%${item.people}%';`, function (err: any, result: any) {
+        const res = result[0];
+        connection.query(`update People set articleNum = ? where name like '${item.people}'`, [res.num], function (err: any, result: any) {
+          if (err) {
+            throw err;
+          }
+        })
+      })
 
-    return JSON.stringify(this.arr)
+    })
   }
 
-  private async initSpiderProcess() {
-    await this.getRawHtml();
+  public async initSpiderProcess() {
+    this.getRawHtml().then(() => {
+      this.isfinished = true;
+      console.log('finished', this.isfinished);
+    })
   }
 
-  constructor() {
-    this.initSpiderProcess();
-    // this.the_people = the_people;
+  public async getAns() {
+    return this.arr;
+  }
+  constructor(private the_people: Array<string>) {
+    this.the_people = the_people;
   }
 }
 

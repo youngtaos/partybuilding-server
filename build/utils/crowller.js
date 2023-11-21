@@ -39,42 +39,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var fs_1 = __importDefault(require("fs"));
-var path_1 = __importDefault(require("path"));
 var superagent_1 = __importDefault(require("superagent"));
 var cheerio_1 = __importDefault(require("cheerio"));
-var oldWrite = '';
+var schedule = require('node-schedule');
+var connection = require('../mysql/db');
 var Crowller = /** @class */ (function () {
-    function Crowller() {
-        this.filePath = path_1.default.resolve(__dirname, '../../data/data.json');
+    function Crowller(the_people) {
+        this.the_people = the_people;
         this.rawHtml = '';
-        this.the_people = ["陈宁",
-            "裴仰军",
-            "周伟",
-            "陈国荣",
-            "利节",
-            "陈刘奎",
-            "都进学",
-            "冯骊骁",
-            "祝华正",
-            "张倩",
-            "彭军",
-            "翟渊",
-            "于安宁",
-            "姚瑶",
-            "金尚柱",
-            "屈治华",
-            "胡燕",
-            "张咪",
-            "周召敏",
-            "周述敏",
-            "杨怡康",
-            "晏丹",];
         this.arr = [];
-        this.oldWrite = [];
-        this.cnt = 178;
-        this.initSpiderProcess();
-        // this.the_people = the_people;
+        this.isfinished = false;
+        this.cnt = 180;
+        this.point = 'xxyw.htm';
+        this.the_people = the_people;
     }
     Crowller.prototype.getLiArray = function (html) {
         var _this = this;
@@ -88,26 +65,26 @@ var Crowller = /** @class */ (function () {
                 var aaa = (_a = title) === null || _a === void 0 ? void 0 : _a.split('/');
                 var flag = $(element).find('span').text();
                 if (flag.includes('智能技术与工程学院')) {
-                    var ResultArr = void 0;
                     if (aaa && aaa[0] === '..') {
                         var bbb = (_b = title) === null || _b === void 0 ? void 0 : _b.split('/');
-                        var articleUrl = '';
+                        var articleUrl_1 = '';
                         if (bbb) {
                             if (bbb[5]) {
-                                articleUrl = "https://www.cqust.edu.cn/info/" + bbb[4] + "/" + bbb[5];
+                                articleUrl_1 = "https://www.cqust.edu.cn/info/" + bbb[4] + "/" + bbb[5];
                             }
                             else if (bbb[4]) {
-                                articleUrl = "https://www.cqust.edu.cn/info/" + bbb[3] + "/" + bbb[4];
+                                articleUrl_1 = "https://www.cqust.edu.cn/info/" + bbb[3] + "/" + bbb[4];
                             }
                             try {
-                                superagent_1.default.get(articleUrl).then(function (res) {
+                                superagent_1.default.get(articleUrl_1).then(function (res) {
                                     var $ = cheerio_1.default.load(res.text);
-                                    var temp = { content: '', title: '', imgSrc: '', academy: '', message: '', people: [], isReaded: false };
+                                    var temp = { content: '', title: '', imgSrc: '', academy: '', message: '', people: [], isReaded: false, articleUrl: '' };
                                     temp.title = $('.news_ny_left h2').text();
                                     temp.message = $('.news_ny_left .message').text();
-                                    temp.content = $('.news_ny_left .main').text();
+                                    temp.content = $('.news_ny_left .main').text() || '';
                                     temp.imgSrc = "https://www.cqust.edu.cn/" + $('.news_ny_left .main img').attr('src');
                                     temp.isReaded = false;
+                                    temp.articleUrl = articleUrl_1;
                                     if (temp.content.includes('智能技术与工程学院')
                                         || temp.title.includes('智能技术与工程学院')) {
                                         temp.academy = '智能技术与工程学院';
@@ -117,66 +94,108 @@ var Crowller = /** @class */ (function () {
                                             || temp.title.includes(item))) {
                                             temp.people.push(item);
                                             if (temp.isReaded === false) {
-                                                _this.writeFile(temp);
+                                                _this.arr.push(temp);
                                                 temp.isReaded = true;
                                             }
                                         }
                                     });
+                                }).catch(function (e) {
+                                    throw (e);
                                 });
                             }
-                            catch (e) { }
+                            catch (e) {
+                                throw (e);
+                            }
                         }
                     }
                 }
             });
         });
+        return this.arr;
     };
     Crowller.prototype.getRawHtml = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var url, result, e_1;
+            var result, $, point, rule;
+            var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        if (!(this.cnt >= 0)) return [3 /*break*/, 5];
-                        url = void 0;
-                        url = "https://www.cqust.edu.cn/index/xww/xxyw/" + this.cnt + ".htm";
-                        if (this.cnt === 178) {
-                            url = "https://www.cqust.edu.cn/index/xww/xxyw.htm";
-                        }
-                        _a.label = 1;
+                    case 0: return [4 /*yield*/, superagent_1.default.get("https://www.cqust.edu.cn/index/xww/xxyw.htm")];
                     case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, superagent_1.default.get(url)];
-                    case 2:
                         result = _a.sent();
                         this.rawHtml = result.text;
+                        $ = cheerio_1.default.load(this.rawHtml);
                         this.getLiArray(this.rawHtml);
-                        this.cnt = this.cnt - 1;
-                        return [3 /*break*/, 4];
-                    case 3:
-                        e_1 = _a.sent();
-                        return [3 /*break*/, 4];
-                    case 4: return [3 /*break*/, 0];
-                    case 5: return [2 /*return*/];
+                        point = $('.ny_list').children('div').children('span').find('.p_next').find('a').attr('href');
+                        this.cnt = parseInt(point.split('/')[1].split('.')[0]);
+                        rule = new schedule.RecurrenceRule();
+                        rule.second = [0, 10, 20, 30, 40, 50];
+                        console.log('开始爬取');
+                        return [2 /*return*/, new Promise(function () {
+                                var job = schedule.scheduleJob(rule, function () { return __awaiter(_this, void 0, void 0, function () {
+                                    var url, result_1;
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                if (!(this.cnt >= 1)) return [3 /*break*/, 2];
+                                                url = "https://www.cqust.edu.cn/index/xww/xxyw/" + this.cnt + ".htm";
+                                                return [4 /*yield*/, superagent_1.default.get(url)];
+                                            case 1:
+                                                result_1 = _a.sent();
+                                                this.rawHtml = result_1.text;
+                                                this.getLiArray(this.rawHtml);
+                                                console.log(this.cnt);
+                                                this.cnt = this.cnt - 1;
+                                                return [3 /*break*/, 0];
+                                            case 2:
+                                                if (this.cnt < 0) {
+                                                    console.log('爬取成功');
+                                                    this.writeFile();
+                                                    job.cancel();
+                                                }
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); });
+                            })];
                 }
             });
         });
     };
-    Crowller.prototype.writeFile = function (content) {
-        this.arr.push(content);
+    Crowller.prototype.writeFile = function () {
         Array.from(new Set(this.arr));
-        fs_1.default.writeFileSync(this.filePath, JSON.stringify(this.arr));
-        return JSON.stringify(this.arr);
+        connection.query("TRUNCATE TABLE Aschema ");
+        this.arr.forEach(function (item) {
+            connection.query("insert into Aschema(id, content, title, imgSrc, academy, message, people, articleUrl) values(0,?,?,?,?,?,?,?);", [item.content, item.title, item.imgSrc, item.academy, item.message, JSON.stringify(item.people), item.articleUrl], function (err, result) {
+                if (err) {
+                    throw err;
+                }
+            });
+            connection.query("select count(people) as num  from aschema WHERE people like '%" + item.people + "%';", function (err, result) {
+                var res = result[0];
+                connection.query("update People set articleNum = ? where name like '" + item.people + "'", [res.num], function (err, result) {
+                    if (err) {
+                        throw err;
+                    }
+                });
+            });
+        });
     };
     Crowller.prototype.initSpiderProcess = function () {
         return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.getRawHtml()];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                }
+                this.getRawHtml().then(function () {
+                    _this.isfinished = true;
+                    console.log('finished', _this.isfinished);
+                });
+                return [2 /*return*/];
+            });
+        });
+    };
+    Crowller.prototype.getAns = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, this.arr];
             });
         });
     };

@@ -1,4 +1,4 @@
-import { CrowllerController, LoginController } from '../controller';
+import { ArticleController, CrowllerController, LoginController, PeopleController } from '../controller';
 
 export enum Methods {
   get = 'get',
@@ -6,8 +6,8 @@ export enum Methods {
 }
 
 function getRequestDecorator(type: Methods) {
-  return function(path: string) {
-    return function(target: CrowllerController | LoginController, key: string) {
+  return function (path: string) {
+    return function (target: CrowllerController | LoginController | PeopleController | ArticleController, key: string) {
       Reflect.defineMetadata('path', path, target, key);
       Reflect.defineMetadata('method', type, target, key);
     };
