@@ -115,7 +115,6 @@ var CrowllerController = /** @class */ (function () {
     ], CrowllerController.prototype, "saveData", null);
     __decorate([
         decorator_1.get('/api/showData'),
-        decorator_1.use(exports.checkLogin),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)

@@ -41,7 +41,6 @@ export class CrowllerController {
 
 
   @get('/api/showData')
-  @use(checkLogin)
   showData(req: BodyRequest, res: Response): void {
     try {
       connection.query(`select * from Aschema `, function (err: unknown, result: any) {
