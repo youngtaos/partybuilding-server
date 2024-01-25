@@ -23,7 +23,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -48,38 +48,49 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CrowllerController = exports.checkLogin = void 0;
 require("reflect-metadata");
 var decorator_1 = require("../decorator");
 var util_1 = require("../utils/util");
 var crowller_1 = __importDefault(require("../utils/crowller"));
 var connection = require('../mysql/db');
-exports.checkLogin = function (req, res, next) {
+var checkLogin = function (req, res, next) {
     var isLogin = !!(req.session ? req.session.login : false);
     if (isLogin) {
         next();
     }
     else {
-        res.json(util_1.getResponseData(null, '请先登录'));
+        res.json((0, util_1.getResponseData)(null, '请先登录'));
     }
 };
+exports.checkLogin = checkLogin;
 var CrowllerController = /** @class */ (function () {
     function CrowllerController() {
     }
     CrowllerController.prototype.getData = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var defaultNames, _a, names, crowller;
+            var defaultNames, _a, names, crowller, ans, e_1;
             return __generator(this, function (_b) {
-                defaultNames = ["陈宁", "屈治华", "胡燕", "金尚柱", "姚瑶", "于安宁", "翟渊", "彭军", "张倩", "祝华正", "冯骊骁", "都进学", "陈刘奎", "利节", "陈国荣", "周伟", "晏丹"];
-                _a = req.body.names, names = _a === void 0 ? JSON.stringify(defaultNames) : _a;
-                if (names) {
-                    crowller = new crowller_1.default(JSON.parse(names));
-                    crowller.initSpiderProcess();
-                    if (crowller.cnt <= 0) {
-                        console.log('finish');
-                    }
+                switch (_b.label) {
+                    case 0:
+                        defaultNames = ["陈宁", "屈治华", "胡燕", "金尚柱", "姚瑶", "于安宁", "翟渊", "彭军", "张倩", "祝华正", "冯骊骁", "都进学", "陈刘奎", "利节", "陈国荣", "周伟", "晏丹"];
+                        _a = req.body.names, names = _a === void 0 ? JSON.stringify(defaultNames) : _a;
+                        if (!names) return [3 /*break*/, 4];
+                        crowller = new crowller_1.default(JSON.parse(names));
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, crowller.initSpiderProcess()];
+                    case 2:
+                        ans = _b.sent();
+                        res.json((0, util_1.getResponseData)(ans));
+                        return [3 /*break*/, 4];
+                    case 3:
+                        e_1 = _b.sent();
+                        console.log(e_1);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
                 }
-                res.json(util_1.getResponseData(true));
-                return [2 /*return*/];
             });
         });
     };
@@ -91,36 +102,36 @@ var CrowllerController = /** @class */ (function () {
                     throw err;
                 }
                 else {
-                    res.json(util_1.getResponseData(result));
+                    res.json((0, util_1.getResponseData)(result));
                 }
             });
         }
         catch (e) {
-            res.json(util_1.getResponseData(false, '数据不存在'));
+            res.json((0, util_1.getResponseData)(false, '数据不存在'));
         }
     };
     __decorate([
-        decorator_1.post('/api/getData'),
-        decorator_1.use(exports.checkLogin),
+        (0, decorator_1.post)('/api/getData'),
+        (0, decorator_1.use)(exports.checkLogin),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", Promise)
     ], CrowllerController.prototype, "getData", null);
     __decorate([
-        decorator_1.post('/api/saveData'),
-        decorator_1.use(exports.checkLogin),
+        (0, decorator_1.post)('/api/saveData'),
+        (0, decorator_1.use)(exports.checkLogin),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], CrowllerController.prototype, "saveData", null);
     __decorate([
-        decorator_1.get('/api/showData'),
+        (0, decorator_1.get)('/api/showData'),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], CrowllerController.prototype, "showData", null);
     CrowllerController = __decorate([
-        decorator_1.controller('/')
+        (0, decorator_1.controller)('/')
     ], CrowllerController);
     return CrowllerController;
 }());

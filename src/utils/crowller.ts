@@ -88,8 +88,8 @@ class Crowller {
 
     let rule = new schedule.RecurrenceRule();
     rule.second = [0, 10, 20, 30, 40, 50];
-    console.log('开始爬取');
-    return new Promise(() => {
+    console.log('开始爬取123');
+    return new Promise((resolve) => {
       let job = schedule.scheduleJob(rule, async () => {
         while (this.cnt >= 1) {
           let url = `https://www.cqust.edu.cn/index/xww/xxyw/${this.cnt}.htm`;
@@ -100,7 +100,8 @@ class Crowller {
           this.cnt = this.cnt - 1;
         }
         if (this.cnt < 0) {
-          console.log('爬取成功');
+          console.log('爬取成功123');
+          resolve("success")
           this.writeFile()
           job.cancel();
         }
@@ -132,9 +133,14 @@ class Crowller {
   }
 
   public async initSpiderProcess() {
-    this.getRawHtml().then(() => {
-      this.isfinished = true;
-      console.log('finished', this.isfinished);
+    return new Promise((resolve) => {
+      this.getRawHtml().then(() => {
+        this.isfinished = true;
+        //console.log(this.arr, 'crowller')
+        console.log('finished', this.isfinished);
+        resolve(this.arr)
+
+      })
     })
   }
 

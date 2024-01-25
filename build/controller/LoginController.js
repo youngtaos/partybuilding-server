@@ -9,9 +9,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.LoginController = void 0;
 require("reflect-metadata");
 var decorator_1 = require("../decorator");
 var util_1 = require("../utils/util");
+// import OpenAI from 'openai';
+require("dotenv/config");
 var LoginController = /** @class */ (function () {
     function LoginController() {
     }
@@ -21,24 +24,24 @@ var LoginController = /** @class */ (function () {
     };
     LoginController.prototype.isLogin = function (req, res) {
         var isLogin = LoginController_1.isLogin(req);
-        res.json(util_1.getResponseData(isLogin));
+        res.json((0, util_1.getResponseData)(isLogin));
     };
     LoginController.prototype.login = function (req, res) {
         var _a = req.body, username = _a.username, password = _a.password;
         var isLogin = LoginController_1.isLogin(req);
         if (username === '123' && password === '123' && req.session) {
             req.session.login = true;
-            res.json(util_1.getResponseData(true));
+            res.json((0, util_1.getResponseData)(true));
         }
         else {
-            res.json(util_1.getResponseData(false, '登陆失败'));
+            res.json((0, util_1.getResponseData)(false, '登陆失败'));
         }
     };
     LoginController.prototype.logout = function (req, res) {
         if (req.session) {
             req.session.login = undefined;
         }
-        res.json(util_1.getResponseData(true));
+        res.json((0, util_1.getResponseData)(true));
     };
     LoginController.prototype.home = function (req, res) {
         var isLogin = LoginController_1.isLogin(req);
@@ -51,31 +54,31 @@ var LoginController = /** @class */ (function () {
     };
     var LoginController_1;
     __decorate([
-        decorator_1.get('/api/isLogin'),
+        (0, decorator_1.get)('/api/isLogin'),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], LoginController.prototype, "isLogin", null);
     __decorate([
-        decorator_1.post('/api/login'),
+        (0, decorator_1.post)('/api/login'),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], LoginController.prototype, "login", null);
     __decorate([
-        decorator_1.get('/api/logout'),
+        (0, decorator_1.get)('/api/logout'),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], LoginController.prototype, "logout", null);
     __decorate([
-        decorator_1.get('/'),
+        (0, decorator_1.get)('/'),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], LoginController.prototype, "home", null);
     LoginController = LoginController_1 = __decorate([
-        decorator_1.controller('/')
+        (0, decorator_1.controller)('/')
     ], LoginController);
     return LoginController;
 }());

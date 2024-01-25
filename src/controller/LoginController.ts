@@ -2,6 +2,10 @@ import 'reflect-metadata';
 import { Request, Response } from 'express';
 import { controller, get, post } from '../decorator';
 import { getResponseData } from '../utils/util';
+// import OpenAI from 'openai';
+import 'dotenv/config'
+
+
 
 interface BodyRequest extends Request {
   body: { [key: number]: string | undefined, [key: string]: string | undefined };
@@ -38,6 +42,8 @@ export class LoginController {
     }
     res.json(getResponseData(true));
   }
+
+
 
   @get('/')
   home(req: BodyRequest, res: Response): void {

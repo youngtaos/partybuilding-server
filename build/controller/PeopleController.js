@@ -23,7 +23,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -45,6 +45,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeopleController = void 0;
 require("reflect-metadata");
 var decorator_1 = require("../decorator");
 var util_1 = require("../utils/util");
@@ -62,12 +63,12 @@ var PeopleController = /** @class */ (function () {
                     throw err;
                 }
                 else {
-                    res.json(util_1.getResponseData(result));
+                    res.json((0, util_1.getResponseData)(result));
                 }
             });
         }
         catch (e) {
-            res.json(util_1.getResponseData(false, '数据不存在'));
+            res.json((0, util_1.getResponseData)(false, '数据不存在'));
         }
     };
     PeopleController.prototype.DeletePeopleById = function (req, res) {
@@ -78,12 +79,12 @@ var PeopleController = /** @class */ (function () {
                     throw err;
                 }
                 else {
-                    res.json(util_1.getResponseData(result));
+                    res.json((0, util_1.getResponseData)(result));
                 }
             });
         }
         catch (e) {
-            res.json(util_1.getResponseData(false, '删除失败'));
+            res.json((0, util_1.getResponseData)(false, '删除失败'));
         }
     };
     PeopleController.prototype.addPeople = function (req, res) {
@@ -95,12 +96,12 @@ var PeopleController = /** @class */ (function () {
                     throw err;
                 }
                 else {
-                    res.json(util_1.getResponseData(result));
+                    res.json((0, util_1.getResponseData)(result));
                 }
             });
         }
         catch (e) {
-            res.json(util_1.getResponseData(false, '添加失败'));
+            res.json((0, util_1.getResponseData)(false, '添加失败'));
         }
     };
     PeopleController.prototype.updatePeople = function (req, res) {
@@ -111,41 +112,40 @@ var PeopleController = /** @class */ (function () {
                     throw err;
                 }
                 else {
-                    res.json(util_1.getResponseData(result));
+                    res.json((0, util_1.getResponseData)(result));
                 }
             });
         }
         catch (e) {
-            res.json(util_1.getResponseData(false, '添加失败'));
+            res.json((0, util_1.getResponseData)(false, '添加失败'));
         }
     };
     PeopleController.prototype.getPeopleArticle = function (req, res) {
     };
     // 头像图片上传
     PeopleController.prototype.upload = function (req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function () {
             var uploadRes, img_url, personId, error_1;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
-                        _b.trys.push([0, 2, , 3]);
+                        _a.trys.push([0, 2, , 3]);
                         return [4 /*yield*/, uploadAvatar(req, res)];
                     case 1:
-                        uploadRes = _b.sent();
-                        img_url = (_a = uploadRes) === null || _a === void 0 ? void 0 : _a.img_url;
+                        uploadRes = _a.sent();
+                        img_url = uploadRes === null || uploadRes === void 0 ? void 0 : uploadRes.img_url;
                         personId = req.body.personId;
                         connection.query("update People set avatar=? where id = ?", [img_url, personId], function (err, result) {
                             if (err) {
                                 throw err;
                             }
                             else {
-                                res.json(util_1.getResponseData(result));
+                                res.json((0, util_1.getResponseData)(result));
                             }
                         });
                         return [3 /*break*/, 3];
                     case 2:
-                        error_1 = _b.sent();
+                        error_1 = _a.sent();
                         res.send(error_1);
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
@@ -154,47 +154,47 @@ var PeopleController = /** @class */ (function () {
         });
     };
     __decorate([
-        decorator_1.get('/getPeopleInfo'),
-        decorator_1.use(CrowllerController_1.checkLogin),
+        (0, decorator_1.get)('/getPeopleInfo'),
+        (0, decorator_1.use)(CrowllerController_1.checkLogin),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], PeopleController.prototype, "getArticleNum", null);
     __decorate([
-        decorator_1.post('/DeletePeopleById'),
-        decorator_1.use(CrowllerController_1.checkLogin),
+        (0, decorator_1.post)('/DeletePeopleById'),
+        (0, decorator_1.use)(CrowllerController_1.checkLogin),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], PeopleController.prototype, "DeletePeopleById", null);
     __decorate([
-        decorator_1.post('/addPeople'),
-        decorator_1.use(CrowllerController_1.checkLogin),
+        (0, decorator_1.post)('/addPeople'),
+        (0, decorator_1.use)(CrowllerController_1.checkLogin),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], PeopleController.prototype, "addPeople", null);
     __decorate([
-        decorator_1.post('/updatePeople'),
-        decorator_1.use(CrowllerController_1.checkLogin),
+        (0, decorator_1.post)('/updatePeople'),
+        (0, decorator_1.use)(CrowllerController_1.checkLogin),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], PeopleController.prototype, "updatePeople", null);
     __decorate([
-        decorator_1.get('/getPeopleAticle'),
+        (0, decorator_1.get)('/getPeopleAticle'),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], PeopleController.prototype, "getPeopleArticle", null);
     __decorate([
-        decorator_1.post('/uploadPeopleAvatar'),
+        (0, decorator_1.post)('/uploadPeopleAvatar'),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", Promise)
     ], PeopleController.prototype, "upload", null);
     PeopleController = __decorate([
-        decorator_1.controller('/api/people')
+        (0, decorator_1.controller)('/api/people')
     ], PeopleController);
     return PeopleController;
 }());

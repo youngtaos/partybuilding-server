@@ -27,12 +27,20 @@ export class CrowllerController {
     const { names = JSON.stringify(defaultNames) } = req.body;
     if (names) {
       const crowller = new Crowller(JSON.parse(names));
-      crowller.initSpiderProcess();
-      if (crowller.cnt <= 0) {
-        console.log('finish');
+      // crowller.initSpiderProcess().then((ans => {
+      //   console.log(ans, 'yts')
+      //   res.json(getResponseData(ans));
+      // })).catch((err) => {
+      //   res.json(getResponseData(err))
+      // })
+      try {
+        const ans = await crowller.initSpiderProcess()
+        res.json(getResponseData(ans));
+      } catch (e) {
+        console.log(e)
       }
+      //console.log(ans, 'yts')
     }
-    res.json(getResponseData(true));
   }
 
   @post('/api/saveData')

@@ -9,6 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ArticleController = void 0;
 var decorator_1 = require("../decorator");
 var util_1 = require("../utils/util");
 var connection = require('../mysql/db');
@@ -22,22 +23,22 @@ var ArticleController = /** @class */ (function () {
                     throw err;
                 }
                 else {
-                    res.json(util_1.getResponseData(result));
+                    res.json((0, util_1.getResponseData)(result));
                 }
             });
         }
         catch (e) {
-            res.json(util_1.getResponseData(false, '数据不存在'));
+            res.json((0, util_1.getResponseData)(false, '数据不存在'));
         }
     };
     __decorate([
-        decorator_1.get('/getPersonArticle'),
+        (0, decorator_1.get)('/getPersonArticle'),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], ArticleController.prototype, "getPersonArticle", null);
     ArticleController = __decorate([
-        decorator_1.controller('/api/article')
+        (0, decorator_1.controller)('/api/article')
     ], ArticleController);
     return ArticleController;
 }());

@@ -14,7 +14,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -60,20 +60,19 @@ var Crowller = /** @class */ (function () {
         LiArrays.push($('.ny_list').children('ul').children('li'));
         LiArrays.forEach(function (item, index) {
             item.map(function (index, element) {
-                var _a, _b;
                 var title = $(element).find('a').attr('href');
-                var aaa = (_a = title) === null || _a === void 0 ? void 0 : _a.split('/');
+                var aaa = title === null || title === void 0 ? void 0 : title.split('/');
                 var flag = $(element).find('span').text();
                 if (flag.includes('智能技术与工程学院')) {
                     if (aaa && aaa[0] === '..') {
-                        var bbb = (_b = title) === null || _b === void 0 ? void 0 : _b.split('/');
+                        var bbb = title === null || title === void 0 ? void 0 : title.split('/');
                         var articleUrl_1 = '';
                         if (bbb) {
                             if (bbb[5]) {
-                                articleUrl_1 = "https://www.cqust.edu.cn/info/" + bbb[4] + "/" + bbb[5];
+                                articleUrl_1 = "https://www.cqust.edu.cn/info/".concat(bbb[4], "/").concat(bbb[5]);
                             }
                             else if (bbb[4]) {
-                                articleUrl_1 = "https://www.cqust.edu.cn/info/" + bbb[3] + "/" + bbb[4];
+                                articleUrl_1 = "https://www.cqust.edu.cn/info/".concat(bbb[3], "/").concat(bbb[4]);
                             }
                             try {
                                 superagent_1.default.get(articleUrl_1).then(function (res) {
@@ -82,7 +81,7 @@ var Crowller = /** @class */ (function () {
                                     temp.title = $('.news_ny_left h2').text();
                                     temp.message = $('.news_ny_left .message').text();
                                     temp.content = $('.news_ny_left .main').text() || '';
-                                    temp.imgSrc = "https://www.cqust.edu.cn/" + $('.news_ny_left .main img').attr('src');
+                                    temp.imgSrc = "https://www.cqust.edu.cn/".concat($('.news_ny_left .main img').attr('src'));
                                     temp.isReaded = false;
                                     temp.articleUrl = articleUrl_1;
                                     if (temp.content.includes('智能技术与工程学院')
@@ -129,15 +128,15 @@ var Crowller = /** @class */ (function () {
                         this.cnt = parseInt(point.split('/')[1].split('.')[0]);
                         rule = new schedule.RecurrenceRule();
                         rule.second = [0, 10, 20, 30, 40, 50];
-                        console.log('开始爬取');
-                        return [2 /*return*/, new Promise(function () {
+                        console.log('开始爬取123');
+                        return [2 /*return*/, new Promise(function (resolve) {
                                 var job = schedule.scheduleJob(rule, function () { return __awaiter(_this, void 0, void 0, function () {
                                     var url, result_1;
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0:
                                                 if (!(this.cnt >= 1)) return [3 /*break*/, 2];
-                                                url = "https://www.cqust.edu.cn/index/xww/xxyw/" + this.cnt + ".htm";
+                                                url = "https://www.cqust.edu.cn/index/xww/xxyw/".concat(this.cnt, ".htm");
                                                 return [4 /*yield*/, superagent_1.default.get(url)];
                                             case 1:
                                                 result_1 = _a.sent();
@@ -148,7 +147,8 @@ var Crowller = /** @class */ (function () {
                                                 return [3 /*break*/, 0];
                                             case 2:
                                                 if (this.cnt < 0) {
-                                                    console.log('爬取成功');
+                                                    console.log('爬取成功123');
+                                                    resolve("success");
                                                     this.writeFile();
                                                     job.cancel();
                                                 }
@@ -170,9 +170,9 @@ var Crowller = /** @class */ (function () {
                     throw err;
                 }
             });
-            connection.query("select count(people) as num  from aschema WHERE people like '%" + item.people + "%';", function (err, result) {
+            connection.query("select count(people) as num  from aschema WHERE people like '%".concat(item.people, "%';"), function (err, result) {
                 var res = result[0];
-                connection.query("update People set articleNum = ? where name like '" + item.people + "'", [res.num], function (err, result) {
+                connection.query("update People set articleNum = ? where name like '".concat(item.people, "'"), [res.num], function (err, result) {
                     if (err) {
                         throw err;
                     }
@@ -184,11 +184,14 @@ var Crowller = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
-                this.getRawHtml().then(function () {
-                    _this.isfinished = true;
-                    console.log('finished', _this.isfinished);
-                });
-                return [2 /*return*/];
+                return [2 /*return*/, new Promise(function (resolve) {
+                        _this.getRawHtml().then(function () {
+                            _this.isfinished = true;
+                            //console.log(this.arr, 'crowller')
+                            console.log('finished', _this.isfinished);
+                            resolve(_this.arr);
+                        });
+                    })];
             });
         });
     };

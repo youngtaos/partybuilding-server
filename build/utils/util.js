@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getResponseData = function (data, errMsg) {
+exports.getResponseData = void 0;
+var getResponseData = function (data, errMsg) {
     if (errMsg) {
         return {
             sucesss: false,
@@ -13,3 +14,4 @@ exports.getResponseData = function (data, errMsg) {
         data: data
     };
 };
+exports.getResponseData = getResponseData;
