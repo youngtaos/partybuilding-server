@@ -92,9 +92,21 @@ export class PeopleController {
         }
     }
 
-    @get('/getPeopleAticle')
-    getPeopleArticle(req: BodyRequest, res: Response): void {
+    @post('/getPeopleInfoByName')
+    getPeopleByName(req: BodyRequest, res: Response): void {
+        const { name } = req.body;
+        try {
+            connection.query(`select * from People where name=${name}`, function (err: any, result: any) {
+                if (err) {
+                    throw err;
+                } else {
+                    res.json(getResponseData(result));
+                }
+            });
 
+        } catch (e) {
+            res.json(getResponseData(false, '查询失败'));
+        }
     }
 
     // 头像图片上传

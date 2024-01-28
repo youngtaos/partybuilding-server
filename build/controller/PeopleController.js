@@ -120,7 +120,21 @@ var PeopleController = /** @class */ (function () {
             res.json((0, util_1.getResponseData)(false, '添加失败'));
         }
     };
-    PeopleController.prototype.getPeopleArticle = function (req, res) {
+    PeopleController.prototype.getPeopleByName = function (req, res) {
+        var name = req.body.name;
+        try {
+            connection.query("select * from People where name=".concat(name), function (err, result) {
+                if (err) {
+                    throw err;
+                }
+                else {
+                    res.json((0, util_1.getResponseData)(result));
+                }
+            });
+        }
+        catch (e) {
+            res.json((0, util_1.getResponseData)(false, '查询失败'));
+        }
     };
     // 头像图片上传
     PeopleController.prototype.upload = function (req, res) {
@@ -182,11 +196,11 @@ var PeopleController = /** @class */ (function () {
         __metadata("design:returntype", void 0)
     ], PeopleController.prototype, "updatePeople", null);
     __decorate([
-        (0, decorator_1.get)('/getPeopleAticle'),
+        (0, decorator_1.post)('/getPeopleInfoByName'),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
-    ], PeopleController.prototype, "getPeopleArticle", null);
+    ], PeopleController.prototype, "getPeopleByName", null);
     __decorate([
         (0, decorator_1.post)('/uploadPeopleAvatar'),
         __metadata("design:type", Function),

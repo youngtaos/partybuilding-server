@@ -89,24 +89,36 @@ class Crowller {
     let rule = new schedule.RecurrenceRule();
     rule.second = [0, 10, 20, 30, 40, 50];
     console.log('开始爬取123');
-    return new Promise((resolve) => {
-      let job = schedule.scheduleJob(rule, async () => {
-        while (this.cnt >= 1) {
-          let url = `https://www.cqust.edu.cn/index/xww/xxyw/${this.cnt}.htm`;
-          const result = await superagent.get(url);
-          this.rawHtml = result.text;
-          this.getLiArray(this.rawHtml);
-          console.log(this.cnt)
-          this.cnt = this.cnt - 1;
-        }
-        if (this.cnt < 0) {
-          console.log('爬取成功123');
-          resolve("success")
-          this.writeFile()
-          job.cancel();
-        }
+    return new Promise(async (resolve) => {
+      while (this.cnt >= 1) {
+        let url = `https://www.cqust.edu.cn/index/xww/xxyw/${this.cnt}.htm`;
+        const result = await superagent.get(url);
+        this.rawHtml = result.text;
+        this.getLiArray(this.rawHtml);
+        console.log(this.cnt)
+        this.cnt = this.cnt - 1;
 
-      })
+      }
+      console.log('爬取成功123');
+      resolve("success")
+      this.writeFile()
+      // let job = schedule.scheduleJob(rule, async () => {
+      //   while (this.cnt >= 1) {
+      //     let url = `https://www.cqust.edu.cn/index/xww/xxyw/${this.cnt}.htm`;
+      //     const result = await superagent.get(url);
+      //     this.rawHtml = result.text;
+      //     this.getLiArray(this.rawHtml);
+      //     console.log(this.cnt)
+      //     this.cnt = this.cnt - 1;
+      //   }
+      //   if (this.cnt < 0) {
+      //     console.log('爬取成功123');
+      //     resolve("success")
+      //     this.writeFile()
+      //     job.cancel();
+      //   }
+
+      // })
     })
   }
 
@@ -136,8 +148,6 @@ class Crowller {
     return new Promise((resolve) => {
       this.getRawHtml().then(() => {
         this.isfinished = true;
-        //console.log(this.arr, 'crowller')
-        console.log('finished', this.isfinished);
         resolve(this.arr)
 
       })

@@ -129,34 +129,29 @@ var Crowller = /** @class */ (function () {
                         rule = new schedule.RecurrenceRule();
                         rule.second = [0, 10, 20, 30, 40, 50];
                         console.log('开始爬取123');
-                        return [2 /*return*/, new Promise(function (resolve) {
-                                var job = schedule.scheduleJob(rule, function () { return __awaiter(_this, void 0, void 0, function () {
-                                    var url, result_1;
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0:
-                                                if (!(this.cnt >= 1)) return [3 /*break*/, 2];
-                                                url = "https://www.cqust.edu.cn/index/xww/xxyw/".concat(this.cnt, ".htm");
-                                                return [4 /*yield*/, superagent_1.default.get(url)];
-                                            case 1:
-                                                result_1 = _a.sent();
-                                                this.rawHtml = result_1.text;
-                                                this.getLiArray(this.rawHtml);
-                                                console.log(this.cnt);
-                                                this.cnt = this.cnt - 1;
-                                                return [3 /*break*/, 0];
-                                            case 2:
-                                                if (this.cnt < 0) {
-                                                    console.log('爬取成功123');
-                                                    resolve("success");
-                                                    this.writeFile();
-                                                    job.cancel();
-                                                }
-                                                return [2 /*return*/];
-                                        }
-                                    });
-                                }); });
-                            })];
+                        return [2 /*return*/, new Promise(function (resolve) { return __awaiter(_this, void 0, void 0, function () {
+                                var url, result_1;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            if (!(this.cnt >= 1)) return [3 /*break*/, 2];
+                                            url = "https://www.cqust.edu.cn/index/xww/xxyw/".concat(this.cnt, ".htm");
+                                            return [4 /*yield*/, superagent_1.default.get(url)];
+                                        case 1:
+                                            result_1 = _a.sent();
+                                            this.rawHtml = result_1.text;
+                                            this.getLiArray(this.rawHtml);
+                                            console.log(this.cnt);
+                                            this.cnt = this.cnt - 1;
+                                            return [3 /*break*/, 0];
+                                        case 2:
+                                            console.log('爬取成功123');
+                                            resolve("success");
+                                            this.writeFile();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); })];
                 }
             });
         });
@@ -187,8 +182,6 @@ var Crowller = /** @class */ (function () {
                 return [2 /*return*/, new Promise(function (resolve) {
                         _this.getRawHtml().then(function () {
                             _this.isfinished = true;
-                            //console.log(this.arr, 'crowller')
-                            console.log('finished', _this.isfinished);
                             resolve(_this.arr);
                         });
                     })];
