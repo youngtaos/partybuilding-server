@@ -9,10 +9,11 @@ interface BodyRequest extends Request {
 
 @controller('/api/article')
 export class ArticleController {
-    @get('/getPersonArticle')
+    @post('/getPersonArticle')
     getPersonArticle(req: BodyRequest, res: Response): void {
+        const { name } = req.body
         try {
-            connection.query(`select * from Aschem  where `, function (err: any, result: any) {
+            connection.query(`SELECT * from aschema where people  LIKE '%${name}%' `, function (err: any, result: any) {
                 if (err) {
                     throw err;
                 } else {

@@ -17,8 +17,9 @@ var ArticleController = /** @class */ (function () {
     function ArticleController() {
     }
     ArticleController.prototype.getPersonArticle = function (req, res) {
+        var name = req.body.name;
         try {
-            connection.query("select * from Aschem  where ", function (err, result) {
+            connection.query("SELECT * from aschema where people  LIKE '%".concat(name, "%' "), function (err, result) {
                 if (err) {
                     throw err;
                 }
@@ -32,7 +33,7 @@ var ArticleController = /** @class */ (function () {
         }
     };
     __decorate([
-        (0, decorator_1.get)('/getPersonArticle'),
+        (0, decorator_1.post)('/getPersonArticle'),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
