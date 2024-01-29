@@ -20,11 +20,9 @@ var uploadAvatar = function (req, res) {
                 reject(err);
             }
             else {
-                console.log(req.body.personId, 44);
                 // 对图片进行去重删除和重命名
                 hanldeImgDelAndRename(req.body.personId, req.file.filename, handlePath('../../public'));
                 var img = req.file.filename.split('.');
-                console.log(img);
                 resolve({
                     id: req.body.personId,
                     img_url: BaseURL + imgPath + img[0] + '.' + req.body.personId + '.' + img[1]

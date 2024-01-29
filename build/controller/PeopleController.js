@@ -18,8 +18,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    var _ = { label: 0, sent: function () { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -89,7 +89,6 @@ var PeopleController = /** @class */ (function () {
     };
     PeopleController.prototype.addPeople = function (req, res) {
         var _a = req.body, name = _a.name, posts = _a.posts;
-        console.log(req.body);
         try {
             connection.query("insert into People(id, name, articleNum, posts, avatar) values(?,?,?,?,?)", [null, name, 0, posts, null], function (err, result) {
                 if (err) {
